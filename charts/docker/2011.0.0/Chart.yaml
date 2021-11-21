@@ -1,0 +1,15 @@
+apiVersion: v2
+name: docker
+description: Custom App
+
+type: application
+version: 2011.0.0
+appVersion: v1
+
+dependencies:
+  - name: common
+    repository: file://../../../library/common/2105.0.0
+    version: 2105.0.0
+  - name: common
+    repository: https://truecharts.org
+    version: 8.6.3
