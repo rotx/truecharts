@@ -3,7 +3,7 @@ name: docker
 description: Custom App
 
 type: application
-version: 2011.0.0
+version: 2111.0.3
 appVersion: v1
 
 dependencies:

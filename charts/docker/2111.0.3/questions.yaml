@@ -23,6 +23,8 @@ groups:
     description: "Addon Configuration"
   - name: "Advanced"
     description: "Advanced Configuration"
+  - name: "Health Check"
+    description: "Liveness Configuration"
 portals:
   web_portal:
     protocols:
@@ -37,14 +39,11 @@ questions:
     label: "Configure Portal Button"
     schema:
       type: dict
-      hidden: true
       attrs:
         - variable: enabled
           label: "Enable"
           description: "enable the portal button"
           schema:
-            hidden: true
-            editable: false
             type: boolean
             default: true
 
@@ -338,10 +337,10 @@ questions:
                   hidden: true
               - variable: type
                 label: "Service Type"
-                description: "ClusterIP's are only internally available, nodePorts expose the container to the host node System, Loadbalancer exposes the service using the system loadbalancer"
+                description: "ClusterIP's are only internally available, nodePorts expose the container to the host node system, LoadBalancer exposes the service using the system loadbalancer"
                 schema:
                   type: string
-                  default: "Simple"
+                  default: "ClusterIP"
                   enum:
                     - value: "Simple"
                       description: "Simple"
@@ -401,14 +400,14 @@ questions:
                                 - value: "UDP"
                                   description: "UDP"
                           - variable: targetPort
-                            label: "Target Port"
-                            description: "This port exposes the container port on the service"
+                            label: "Target (Node) Port"
+                            description: "This sets the node port for the service"
                             schema:
                               type: int
                               required: true
                           - variable: port
-                            label: "Port"
-                            description: "This port exposes the container port on the service"
+                            label: "Pod Port"
+                            description: "This port exposes the container port"
                             schema:
                               type: int
                               required: true
@@ -477,6 +476,83 @@ questions:
           schema:
             type: boolean
             default: false
+
+        # Networking options
+        - variable: externalInterfaces
+          description: "Add External Interfaces"
+          label: "Add external Interfaces"
+          group: "Networking and Services"
+          schema:
+            type: list
+            items:
+              - variable: interfaceConfiguration
+                description: "Interface Configuration"
+                label: "Interface Configuration"
+                schema:
+                  type: dict
+                  $ref:
+                    - "normalize/interfaceConfiguration"
+                  attrs:
+                    - variable: hostInterface
+                      description: "Please specify host interface"
+                      label: "Host Interface"
+                      schema:
+                        type: string
+                        required: true
+                        $ref:
+                          - "definitions/interface"
+                    - variable: ipam
+                      description: "Define how IP Address will be managed"
+                      label: "IP Address Management"
+                      schema:
+                        type: dict
+                        required: true
+                        attrs:
+                          - variable: type
+                            description: "Specify type for IPAM"
+                            label: "IPAM Type"
+                            schema:
+                              type: string
+                              required: true
+                              enum:
+                                - value: "dhcp"
+                                  description: "Use DHCP"
+                                - value: "static"
+                                  description: "Use static IP"
+                              show_subquestions_if: "static"
+                              subquestions:
+                                - variable: staticIPConfigurations
+                                  label: "Static IP Addresses"
+                                  schema:
+                                    type: list
+                                    items:
+                                      - variable: staticIP
+                                        label: "Static IP"
+                                        schema:
+                                          type: ipaddr
+                                          cidr: true
+                                - variable: staticRoutes
+                                  label: "Static Routes"
+                                  schema:
+                                    type: list
+                                    items:
+                                      - variable: staticRouteConfiguration
+                                        label: "Static Route Configuration"
+                                        schema:
+                                          type: dict
+                                          attrs:
+                                            - variable: destination
+                                              label: "Destination"
+                                              schema:
+                                                type: ipaddr
+                                                cidr: true
+                                                required: true
+                                            - variable: gateway
+                                              label: "Gateway"
+                                              schema:
+                                                type: ipaddr
+                                                cidr: false
+                                                required: true
 
         - variable: dnsPolicy
           group: "Networking and Services"
@@ -652,83 +728,6 @@ questions:
                                     type: int
                                     min: 9000
                                     max: 65535
-
-  # Networking options
-  - variable: externalInterfaces
-    description: "Add External Interfaces"
-    label: "Add external Interfaces"
-    group: "Networking and Services"
-    schema:
-      type: list
-      items:
-        - variable: interfaceConfiguration
-          description: "Interface Configuration"
-          label: "Interface Configuration"
-          schema:
-            type: dict
-            $ref:
-              - "normalize/interfaceConfiguration"
-            attrs:
-              - variable: hostInterface
-                description: "Please specify host interface"
-                label: "Host Interface"
-                schema:
-                  type: string
-                  required: true
-                  $ref:
-                    - "definitions/interface"
-              - variable: ipam
-                description: "Define how IP Address will be managed"
-                label: "IP Address Management"
-                schema:
-                  type: dict
-                  required: true
-                  attrs:
-                    - variable: type
-                      description: "Specify type for IPAM"
-                      label: "IPAM Type"
-                      schema:
-                        type: string
-                        required: true
-                        enum:
-                          - value: "dhcp"
-                            description: "Use DHCP"
-                          - value: "static"
-                            description: "Use static IP"
-                        show_subquestions_if: "static"
-                        subquestions:
-                          - variable: staticIPConfigurations
-                            label: "Static IP Addresses"
-                            schema:
-                              type: list
-                              items:
-                                - variable: staticIP
-                                  label: "Static IP"
-                                  schema:
-                                    type: ipaddr
-                                    cidr: true
-                          - variable: staticRoutes
-                            label: "Static Routes"
-                            schema:
-                              type: list
-                              items:
-                                - variable: staticRouteConfiguration
-                                  label: "Static Route Configuration"
-                                  schema:
-                                    type: dict
-                                    attrs:
-                                      - variable: destination
-                                        label: "Destination"
-                                        schema:
-                                          type: ipaddr
-                                          cidr: true
-                                          required: true
-                                      - variable: gateway
-                                        label: "Gateway"
-                                        schema:
-                                          type: ipaddr
-                                          cidr: false
-                                          required: true
 
   - variable: persistenceList
     label: "Additional app storage"
@@ -1422,6 +1421,86 @@ questions:
                   type: string
                   default: "/dev/ttyACM0"
 
+  # Pod Probes
+  # Liveness Probe
+  - variable: livenessProbe
+    label: "Liveness Probe"
+    description: "Configure Liveness Probe"
+    group: "Health Check"
+    schema:
+      type: dict
+      default: null
+      "null": true
+      attrs:
+        - variable: enabled
+          label: "Enable"
+          description: "Enable the liveness probe"
+          schema:
+            type: boolean
+            default: true
+        - variable: command
+          label: "Custom liveness command"
+          description: "Specify a custom command to determine liveness of pod"
+          schema:
+            type: list
+            required: true
+            items:
+              - variable: commandArg
+                label: "Command Arg"
+                schema:
+                  type: string
+        - variable: initialDelaySeconds
+          label: "Seconds Delay"
+          description: "Seconds to delay the first liveness probe"
+          schema:
+            type: int
+            default: 5
+        - variable: periodSeconds
+          label: "Period Seconds"
+          description: "Specify number of seconds to run liveness probe"
+          schema:
+            type: int
+            default: 10
+  # Readyness Probe
+  - variable: readinessProbe
+    label: "Readyness Probe"
+    description: "Configure Readyness Probe"
+    group: "Health Check"
+    schema:
+      type: dict
+      default: null
+      "null": true
+      attrs:
+        - variable: enabled
+          label: "Enable"
+          description: "Enable the readyness probe"
+          schema:
+            type: boolean
+            default: true
+        - variable: command
+          label: "Custom readyness command"
+          description: "Specify a custom command to determine readyness of pod"
+          schema:
+            type: list
+            required: true
+            items:
+              - variable: commandArg
+                label: "Command Arg"
+                schema:
+                  type: string
+        - variable: initialDelaySeconds
+          label: "Seconds Delay"
+          description: "Seconds to delay the first readyness probe"
+          schema:
+            type: int
+            default: 5
+        - variable: periodSeconds
+          label: "Period Seconds"
+          description: "Specify number of seconds to run readyness probe"
+          schema:
+            type: int
+            default: 10
+
   # Specify GPU configuration
   - variable: scaleGPU
     label: "GPU Configuration"
@@ -1711,7 +1790,6 @@ questions:
                                     type: string
                                     required: true
 
-
         - variable: promtail
           label: "Promtail"
           schema:
@@ -1779,9 +1857,6 @@ questions:
                                     type: string
                                     required: true
 
-
-
-
         - variable: netshoot
           label: "Netshoot"
           schema:
@@ -1816,3 +1891,4 @@ questions:
                                   schema:
                                     type: string
                                     required: true
+
