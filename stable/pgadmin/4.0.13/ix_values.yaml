@@ -1,0 +1,31 @@
+# Default values for Jackett.
+
+image:
+  repository: docker.io/dpage/pgadmin4
+  pullPolicy: IfNotPresent
+  tag: 6.2@sha256:13e2208c50cb8666967e0396fa4898b555b41b507149dd468966d64caab7da76
+
+securityContext:
+  runAsNonRoot: false
+  readOnlyRootFilesystem: false
+
+podSecurityContext:
+  runAsUser: 0
+  runAsGroup: 0
+  fsGroup: 5050
+
+service:
+  main:
+    ports:
+      main:
+        port: 80
+        targetPort: 80
+
+env:
+  PGADMIN_DEFAULT_EMAIL: "replace@this.now"
+  PGADMIN_DEFAULT_PASSWORD: "changeme"
+
+persistence:
+  config:
+    enabled: true
+    mountPath: "/var/lib/pgadmin"

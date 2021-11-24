@@ -1,0 +1,24 @@
+# Default values for Gaps.
+
+image:
+  repository: ghcr.io/truecharts/gaps
+  pullPolicy: IfNotPresent
+  tag: v0.8.8@sha256:2e4b3b4e677be68b947517b0077aec719db8c382dad2952421b746060bbd6513
+
+securityContext:
+  readOnlyRootFilesystem: false
+
+service:
+  main:
+    ports:
+      main:
+        port: 8484
+        targetPort: 8484
+
+env: {}
+  # TZ: UTC
+
+persistence:
+  data:
+    enabled: true
+    mountPath: "/usr/data"

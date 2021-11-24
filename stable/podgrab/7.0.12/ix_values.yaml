@@ -1,0 +1,40 @@
+# Default values for podgrab.
+
+image:
+  repository: ghcr.io/truecharts/podgrab
+  pullPolicy: Always
+  tag: v1.0.0@sha256:17a92f111c5840f1fb78f216e4191ec1f5eeeb04ad5a1a5bdde0df35fdbe8910
+
+service:
+  main:
+    ports:
+      main:
+        port: 8080
+        targetPort: 8080
+  tcp:
+    enabled: true
+    ports:
+      tcp:
+        enabled: true
+        port: 51080
+        targetPort: 51080
+
+env:
+  PASSWORD: "secretpasswordgoeshere"
+  CHECK_FREQUENCY: 240
+
+persistence:
+  config:
+    enabled: true
+    mountPath: "/config"
+
+
+probes:
+  liveness:
+    enabled: false
+
+  readiness:
+    enabled: false
+
+  startup:
+    enabled: false

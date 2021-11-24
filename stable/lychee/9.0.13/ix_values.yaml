@@ -1,0 +1,29 @@
+# Default values for Lychee.
+
+image:
+  repository: ghcr.io/truecharts/lychee-laravel
+  pullPolicy: IfNotPresent
+  tag: v4.3.6@sha256:4bed7b11de627f40477b8865869cd757610969dcecbafaa1a1aac4ea1e8ae1bf
+
+securityContext:
+  readOnlyRootFilesystem: false
+  runAsNonRoot: false
+
+podSecurityContext:
+  runAsUser: 0
+  runAsGroup: 0
+
+service:
+  main:
+    ports:
+      main:
+        port: 80
+        targetPort: 80
+
+env: {}
+  # PHP_TZ: UTC
+  # PUID: 1001
+persistence:
+  config:
+    enabled: true
+    mountPath: "/config"

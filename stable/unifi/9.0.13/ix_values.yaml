@@ -1,0 +1,70 @@
+# Default values for Unifi.
+
+image:
+  repository: ghcr.io/truecharts/unifi
+  tag: v6.5.53@sha256:c6cf26dcd8e73e95503a9a8fb5ab36458c05c724b33add8dc1a6152648f33d3d
+  pullPolicy: IfNotPresent
+
+envTpl:
+  # Permissions Settings
+  UNIFI_GID: "{{ .Values.env.PUID }}"
+  UNIFI_UID: "{{ .Values.podSecurityContext.fsGroup }}"
+
+service:
+  main:
+    ports:
+      main:
+        protocol: HTTPS
+        port: 8443
+        targetPort: 8443
+  comm:
+    enabled: true
+    ports:
+      comm:
+        enabled: true
+        port: 8080
+        targetPort: 8080
+  stun:
+    enabled: true
+    ports:
+      stun:
+        enabled: true
+        port: 3478
+        targetPort: 3478
+        protocol: UDP
+  speedtest:
+    enabled: true
+    ports:
+      speedtest:
+        enabled: true
+        port: 6789
+        targetPort: 6789
+  guestportal:
+    enabled: true
+    ports:
+      web:
+        enabled: true
+        port: 8880
+        targetPort: 8880
+        protocol: HTTP
+      websecure:
+        enabled: true
+        port: 8843
+        targetPort: 8843
+        protocol: HTTPS
+
+securityContext:
+  readOnlyRootFilesystem: false
+  runAsNonRoot: false
+
+podSecurityContext:
+  runAsGroup: 0
+  runAsUser: 0
+
+env:
+  # TZ:
+  PUID: 568
+persistence:
+  config:
+    enabled: true
+    mountPath: "/unifi"

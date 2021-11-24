@@ -1,0 +1,90 @@
+# Default values for zwavejs2mqtt.
+# This chart inherits from our common library chart. You can check the default values/options here:
+# https://github.com/k8s-at-home/charts/tree/master/charts/common
+
+image:
+  repository: ghcr.io/truecharts/zwavejs2mqtt
+  pullPolicy: IfNotPresent
+  tag: v5.12.0@sha256:1d1870e8ccbb1cd2f6417e0f4879e8923e7ac56c88a1215bdc14eaeb69751a0c
+
+securityContext:
+  readOnlyRootFilesystem: false
+
+# # See more environment variables in the zwavejs2mqtt documentation
+# https://zwave-js.github.io/zwavejs2mqtt/#/guide/env-vars
+env: {}
+  # OZW_NETWORK_KEY:
+
+probes:
+  liveness:
+    enabled: true
+    # custom: true
+    # spec:
+    #   failureThreshold: 5
+    #   httpGet:
+    #     path: /health
+    #     port: http
+    #     httpHeaders:
+    #       - name: Accept
+    #         value: text/plain
+    #   initialDelaySeconds: 30
+    #   periodSeconds: 10
+    #   timeoutSeconds: 10
+  readiness:
+    enabled: true
+    # custom: true
+    # spec:
+    #   failureThreshold: 5
+    #   httpGet:
+    #     path: /health
+    #     port: http
+    #     httpHeaders:
+    #       - name: Accept
+    #         value: text/plain
+    #   initialDelaySeconds: 30
+    #   periodSeconds: 10
+    #   timeoutSeconds: 10
+  startup:
+    enabled: false
+    # custom: true
+    # spec:
+    #   failureThreshold: 5
+    #   httpGet:
+    #     path: /health
+    #     port: http
+    #     httpHeaders:
+    #       - name: Accept
+    #         value: text/plain
+    #   initialDelaySeconds: 30
+    #   periodSeconds: 10
+    #   timeoutSeconds: 10
+
+service:
+  main:
+    ports:
+      main:
+        port: 8091
+        targetPort: 8091
+  ws:
+    enabled: true
+    ports:
+      ws:
+        enabled: true
+        port: 3000
+        targetPort: 3000
+
+persistence:
+  config:
+    enabled: true
+    mountPath: "/usr/src/app/store"
+
+
+# affinity:
+#   nodeAffinity:
+#     requiredDuringSchedulingIgnoredDuringExecution:
+#       nodeSelectorTerms:
+#       - matchExpressions:
+#         - key: app
+#           operator: In
+#           values:
+#           - zwave-controller

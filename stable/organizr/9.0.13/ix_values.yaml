@@ -1,0 +1,29 @@
+# Default values for Organizr.
+
+image:
+  repository: organizr/organizr
+  pullPolicy: Always
+  tag: latest@sha256:d8b03b33ea1c65023ef7085bf06d13b0045a099e82fc833c9ac35c071b3e88a8
+
+securityContext:
+  readOnlyRootFilesystem: false
+  runAsNonRoot: false
+
+podSecurityContext:
+  runAsUser: 0
+  runAsGroup: 0
+
+service:
+  main:
+    ports:
+      main:
+        port: 80
+        targetPort: 80
+
+env: {}
+  # TZ: UTC
+  # PUID: 1001
+persistence:
+  config:
+    enabled: true
+    mountPath: "/config"

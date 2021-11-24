@@ -1,0 +1,35 @@
+# Default values for Jackett.
+
+image:
+  repository: ghcr.io/k8s-at-home/jackett
+  pullPolicy: IfNotPresent
+  tag: v0.20.53@sha256:6f82922f155dfd72b23e1ce9ec84de8bbc2a12a362bfbd62d81bc3c3f58ac515
+
+securityContext:
+  readOnlyRootFilesystem: false
+
+service:
+  main:
+    protocol: "HTTP"
+    ports:
+      main:
+        targetPort: 9117
+        port: 9117
+
+probes:
+  liveness:
+    path: "/UI/Login"
+
+  readiness:
+    path: "/UI/Login"
+
+  startup:
+    path: "/UI/Login"
+
+env: {}
+  # TZ: UTC
+  # PUID: 1001
+persistence:
+  config:
+    enabled: true
+    mountPath: "/config"

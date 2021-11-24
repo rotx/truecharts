@@ -1,0 +1,21 @@
+# Default values for KMS.
+
+image:
+  repository: pykmsorg/py-kms
+  pullPolicy: IfNotPresent
+  tag: minimal@sha256:769cc69064bf60c67855a25a4c9e2959fd1e5e640396c35c15599d342d61061e
+
+securityContext:
+  readOnlyRootFilesystem: false
+  runAsNonRoot: false
+
+podSecurityContext:
+  runAsUser: 0
+  runAsGroup: 0
+
+service:
+  main:
+    ports:
+      main:
+        port: 1688
+        targetPort: 1688

@@ -1,0 +1,27 @@
+# Default values for esphome.
+
+image:
+  repository: ghcr.io/truecharts/esphome
+  pullPolicy: IfNotPresent
+  tag: v2021.11.1@sha256:7d1352a61ae5c41dde8922e093b2249badd0f3b4213a1acf90d9be716808201e
+
+service:
+  main:
+    ports:
+      main:
+        port: 6052
+        targetPort: 6052
+
+env: {}
+  # ESPHOME_DASHBOARD_USE_PING: true
+  # ESPHOME_DASHBOARD_RELATIVE_URL: "/"
+  # ESPHOME_QUICKWIZARD:
+  # ESPHOME_IS_HASSIO:
+  # DISABLE_HA_AUTHENTICATION:
+  # USERNAME:
+  # PASSWORD:
+
+persistence:
+  config:
+    enabled: true
+    mountPath: "/config"

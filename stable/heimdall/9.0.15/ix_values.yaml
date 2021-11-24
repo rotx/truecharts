@@ -1,0 +1,33 @@
+# Default values for grocy.
+
+image:
+  repository: ghcr.io/linuxserver/heimdall
+  tag: version-2.2.2@sha256:e829e0aded2ba5f44b46723d73aa8daf8a23a0235cbbe9971524380f9141f0f8
+  pullPolicy: IfNotPresent
+
+securityContext:
+  readOnlyRootFilesystem: false
+  runAsNonRoot: false
+
+podSecurityContext:
+  runAsUser: 0
+  runAsGroup: 0
+
+service:
+  main:
+    ports:
+      main:
+        port: 80
+        targetPort: 80
+
+env: {}
+  # TZ:
+  # PUID:
+probes:
+  startup:
+    enabled: true
+
+persistence:
+  config:
+    enabled: true
+    mountPath: "/config"

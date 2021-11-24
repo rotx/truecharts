@@ -1,0 +1,9 @@
+dependencies:
+- name: common
+  repository: https://truecharts.org
+  version: 8.7.1
+- name: promtail
+  repository: https://grafana.github.io/helm-charts
+  version: 2.2.0
+digest: sha256:e59f49caf0409be2d9cc55664e44a1b281e75c3a5a3e04911f5dc3fd0aca213f
+generated: "2021-11-21T20:53:42.599812782Z"
